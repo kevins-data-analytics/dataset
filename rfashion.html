@@ -4,16 +4,82 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="./jquery.csv2table-0.02-b-4.4.js" type="text/javascript" charset="utf-8"></script><!--jsファイルを指定-->
+    <title>rfashion data</title>
 </head>
 <body>
-    <div id="view0"></div>
+    <h1>rfashion data</h1>
+    <!--検索入力-->
+    <form action="#">
+    <input type="text" name="search" value="" id="search" />
+    </form>
+    <!--テーブル表示-->
+    <table border="1" id="result">
+        <tbody id="data_csv"></tbody>
+    </table>
+    <!--JavaScript-->
     <script>
-    $(function(){
-      $('#view0').csv2table('https://kevins-data-analytics.github.io/dataset/rfashion.csv'); //CSVデータを指定
-    });
+
+window.addEventListener( "DOMContentLoaded", 
+    function(){
+        const search = document.forms[ 0 ].search;
+        const table = document.querySelector( "table" );
+        const nohit = table.parentNode.insertBefore(document.createElement( "div" ), table.nextNode);
+        nohit.textContent = "該当なし";
+        nohit.style.display = "none";
+        search.oninput = function(){
+            const key = search.value.replace( /([\\\*\+\.\?\{\}\(\)\[\]\^\$\-\|\/])/g, "\\$1" );
+            let hit = 0;
+            [].forEach.call( table.rows,
+                function( row, index ){
+                    if( index==0 ){ return false }
+                    row.style.display = [].some.call( row.cells,
+                        function( cell ){
+                            return ( new RegExp( key ) ).test( cell.textContent );
+                        }
+                    ) ? "table-row" : "none" ;
+                    row.style.display=="table-row" ? hit++ : hit ;
+                }
+            );
+            nohit.style.display = hit ? "none" : "block" ;
+        }
+    },
+    false
+);
+
+const outputElement = document.getElementById('data_csv');
+
+// CSVデータの読み込み
+function getCsvData(dataPath) {
+    const request = new XMLHttpRequest();
+    request.addEventListener('load',
+        (event) => {
+            const response = event.target.responseText;
+            convertArray(response);
+        }
+    );
+    request.open('GET', dataPath, true);
+    request.send();
+}
+
+// CSVデータをHTMLのテーブル形式に変換
+function convertArray(data) {
+    const dataArray = [];
+    const dataString = data.split('\n');
+    for (let i = 0; i < dataString.length; i++) {
+        dataArray[i] = dataString[i].split(',');
+    }
+    let insertElement = '';
+    dataArray.forEach(
+        (element) => { insertElement += '<tr>';
+            element.forEach(
+                (childElement) => { insertElement += `<td>${childElement}</td>` }
+            );
+            insertElement += '</tr>';
+        }
+    );
+    outputElement.innerHTML = insertElement;
+}
+getCsvData('https://kevins-data-analytics.github.io/dataset/rfashion_merged.csv');<!--CSVデータを指定-->
     </script>
 </body>
 </html>
