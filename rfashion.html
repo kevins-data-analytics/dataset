@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="./jquery.csv2table-0.02-b-4.4.js" type="text/javascript" charset="utf-8"></script><!--jsファイルを指定-->
+</head>
+<body>
+    <div id="view0"></div>
+    <script>
+    $(function(){
+      $('#view0').csv2table('https://kevins-data-analytics.github.io/dataset/rfashion.csv'); //CSVデータを指定
+    });
+    </script>
+</body>
+</html>
